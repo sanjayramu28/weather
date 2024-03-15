@@ -1,0 +1,169 @@
+.Weather {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+.weat{
+  width: 100vh;
+  background: linear-gradient(90deg, rgba(214, 213, 226, 1) 0%, rgba(156, 156, 252, 1) 35%, rgba(0, 212, 255, 1) 100%);
+  border-radius: 20px;
+}
+
+
+.city-Input {
+  margin-top: 5vh;
+  display: flex;
+}
+
+.city-Input input {
+  margin: 5vh;
+  width: 100%;
+  outline: none;
+  padding: 30px;
+  border: 0px;
+  border-radius: 60px; 
+}
+
+.weather-img {
+  width: 50px;
+  height: 50px;
+  padding: 10px;
+  margin: 5%;
+  cursor: pointer;
+  clip-path: circle(50px);
+}
+
+.fun-facts {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px;
+  position: relative;
+  top: -60vh;
+  overflow: scroll;
+  height: 33vh;
+  text-wrap: wrap;
+  scrollbar-width: none;   
+  float: right;
+  width: 40%;
+}
+
+.less {
+  display: flex;
+  cursor: pointer;
+  height: 70px;
+  /* margin-right: 20px; */
+  animation: fro 2s infinite;
+  
+}
+
+@keyframes fro {
+  0% {
+    transform: translateX(0px);
+  }
+
+  100% {
+    transform: translateX(-60px);
+  }
+}
+
+@keyframes fro1 {
+  0% {
+    transform: translateX(0px);
+  }
+
+  100% {
+    transform: translateX(10px);
+  }
+}
+
+.less1 {
+  display: none;
+  cursor: pointer;
+  height: 60px;
+  animation: fro1 2s infinite;
+
+}
+
+.facts {
+  display: none;
+  color: white;
+  font-family: "Truculenta", sans-serif;
+  font-size: 30px;
+}
+
+
+
+.weather-icon {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 10vh;
+  align-items: center;
+}
+
+.timestamp p {
+  color: white;
+  text-align: center;
+  /* font-size: 50px; */
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.weather-icon p{
+  color: white;
+  font-size: 50px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.humidity,
+.wind {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 30px;
+  /* margin-bottom: 20px; */
+}
+
+.humidity p,
+.wind p {
+  padding: 30px;
+  font-weight: 500;
+  font-family: "Madimi One", sans-serif;
+}
+
+.weather-icon img,
+.humidity img,
+.wind img {
+  width: 150px;
+  height: 150px;
+}
+
+.wind img {
+  animation: scale 3s linear  infinite alternate;
+  /* animation-timeline: view(auto); Default */
+}
+
+@keyframes scale {
+from{
+  transform: scaleX(.6);
+}  
+to{
+  transform: scaleX(.8);
+}
+}
+
+.hum{
+  animation: ii 3s infinite;
+}
+
+@keyframes ii {
+  0%{
+    transform: perspective(10px);
+  }
+  100%{
+    transform: perspective(50px);
+  }
+}
