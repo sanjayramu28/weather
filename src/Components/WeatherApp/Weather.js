@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Weather.css';
 import clear_sky from '../Assests/clear-sky.png';
 import few_clouds from '../Assests/cloud.png';
@@ -10,12 +10,23 @@ import snow from '../Assests/snow.png'
 import mist from '../Assests/mist.png'
 import open from '../Assests/open.png'
 import close from '../Assests/close.png'
+import clear_skyBg from '../Assests/clear-skybg.avif'
+import few_cloudsbg from '../Assests/few-cloudsBg.jpeg'
+import scattered_clousBg from '../Assests/scatteredcloudsbg.jpg'
+import broken_cloudsBg from '../Assests/brokenCloudsBg.jpeg'
+import shower_rainBg from '../Assests/shower_rainBg.jpg'
+import rain_Bg from '../Assests/rainBg.jpg'
+import thunder_bg from '../Assests/thunderBg.jpg'
+import snow_bg from '../Assests/snowBg.jpg'
+import mist_bg from '../Assests/mistbg.avif'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 const Weather = () => {
-
   const [data, Setdata] = useState('')
+  const [descript, Setdescript] = useState(clear_skyBg)
+  const [countryName,SetcountryName]=useState()
+  const [locTime,SetlocTime]=useState()
 
 
   let fun_facts_10 = ['10 degrees Celsius is generally considered a comfortable temperature for many people. It\'s cool but not too cold, making it pleasant for outdoor activities.',
@@ -43,30 +54,53 @@ const Weather = () => {
   const val = document.getElementsByClassName("location");
   const api_key = 'a9341607da913584e1d9eff1389385f7';
 
-  
+  useEffect(()=>{
+    val[0].value="Tiruchengode"
+    
+    search();
+  },[])
 
+  const timezone=async ()=>{
+    let timeapi="9d5ec08b7e2b44d7b14221668430299c";
+    let url=`https://api.ipgeolocation.io/timezone?apiKey=${timeapi}&location=${val[0].value},%20${countryName}`
+    let response=await fetch(url);
+    let timedata=await response.json();
+    // let localTime=timedata.date_time;
+    SetlocTime(timedata.date_time)
+  }
+ 
+  
   const search = async () => {
 
     if (val[0].value === '') {
       window.alert("Enter Location to Continue");
-    }
+    }    
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${val[0].value}&units=metric&appid=${api_key}`
-    let response = await fetch(url);
-    var data1 = await response.json();
+    try{
+          let response = await fetch(url);
+    if(!response.ok){
+      throw new Error()
+    }
+          var data1 = await response.json();
+    }
+    catch{
+      console.log("FGf")
+    }
     Setdata(data1);
     let temperature = document.getElementsByClassName('temperature');
     let Location = document.getElementsByClassName('Loc');
     let humidity = document.getElementsByClassName('humidityp')
     let wind = document.getElementsByClassName('windp');
+    let country1=data1.sys.country;
+    SetcountryName(data1.sys.country)
     temperature[0].innerHTML = data1.main.temp.toFixed() + "   °C";
     Location[0].innerHTML = data1.name;
     humidity[0].innerHTML = data1.main.humidity + " %";
     wind[0].innerHTML = data1.wind.speed + " M/H";
-    let timestamp=data1.timezone;
-    var time=new Date()
-    console.log(time)
-    const timee=document.getElementsByClassName("time")
-    timee[0].innerHTML=time
+    var time = new Date()
+    const timee = document.getElementsByClassName("time")
+    timee[0].innerHTML = time
+  
 
     if (data1.weather[0].icon == "01d" || data1.weather[0].icon == "01n") {
       Seticon(clear_sky)
@@ -117,6 +151,24 @@ const Weather = () => {
     fact[0].innerHTML = fact1
   }
 
+  const background = () => {
+    const bg = document.getElementsByClassName("weat")
+    if (data.weather[0].description === "clear sky") {
+      Setdescript(clear_skyBg)
+    }
+    if (data.weather[0].description === "few clouds") {
+      Setdescript(few_cloudsbg)
+    }
+    if (data.weather[0].description === "scattered clouds") {
+      Setdescript(scattered_clousBg)
+    }
+    if (data.weather[0].description === "broken clouds") {
+      Setdescript(scattered_clousBg)
+    }
+    console.log(data.weather[0].description)
+    console.log(descript)
+  }
+
   const show = () => {
     const fact = document.getElementsByClassName('facts');
     fact[0].style.display = 'flex';
@@ -139,13 +191,12 @@ const Weather = () => {
 
 
   return (
-    <div className='container-fluid' >
-      <div className='Weather'>
-        <div className='weat'>
+    <div className='wha'>
+        <div className='weat' style={{ backgroundImage: `url(${descript})` }}>
           <div className='weather-container'>
             <div className="city-Input">
               <input type='text' placeholder='Search' className='location' />
-              <FontAwesomeIcon icon={faMagnifyingGlass} className='weather-img' onClick={() => { search() }} />
+              <FontAwesomeIcon icon={faMagnifyingGlass} className='weather-img' onClick={() => { search(); background();timezone() }} />
             </div>
           </div>
           <div className='timestamp'>
@@ -157,14 +208,24 @@ const Weather = () => {
             <p className='Loc'> </p>
           </div>
 
-          <div className="row hw">
-            <div className='col-lg-6 humidity'>
+          <div className='sidebar'>
+            <div className='local-time'>
+              <p>{locTime}</p>
+            </div>
+          </div>
+
+          <div className=" hw">
+            <div className='col-lg-4 humidity'>
               <img src='https://cdn-icons-png.flaticon.com/128/6566/6566344.png' className='hum' />
               <p className='humidityp'></p>
             </div>
-            <div className='col-lg-6 wind'>
-              <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png'  />
+            <div className='col-lg-4 wind'>
+              <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png' />
               <p className='windp'></p>
+            </div>
+            <div className='col-lg-4 wind'>
+              <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png' />
+              <p className='windp'>jghj</p>
             </div>
           </div>
           <div className='fun-facts col'>
@@ -174,7 +235,6 @@ const Weather = () => {
           </div>
         </div>
       </div>
-    </div>
   )
 }
 

@@ -1,19 +1,22 @@
-.Weather {
+.wha{
   display: flex;
   justify-content: center;
-  align-items: center;
-  align-content: center;
 }
 .weat{
   width: 100vh;
-  background: linear-gradient(90deg, rgba(214, 213, 226, 1) 0%, rgba(156, 156, 252, 1) 35%, rgba(0, 212, 255, 1) 100%);
+  /* background: linear-gradient(90deg, rgba(214, 213, 226, 1) 0%, rgba(156, 156, 252, 1) 35%, rgba(0, 212, 255, 1) 100%); */
+  /* background-image: url('../Assests/few-cloudsBg.jpeg'); */
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: 20px;
+  
 }
 
 
 .city-Input {
   margin-top: 5vh;
   display: flex;
+
 }
 
 .city-Input input {
@@ -39,7 +42,7 @@
   justify-content: flex-end;
   margin: 10px;
   position: relative;
-  top: -60vh;
+  top: -90vh;
   overflow: scroll;
   height: 33vh;
   text-wrap: wrap;
@@ -82,7 +85,6 @@
   cursor: pointer;
   height: 60px;
   animation: fro1 2s infinite;
-
 }
 
 .facts {
@@ -121,22 +123,21 @@
 .wind {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   color: white;
   font-size: 30px;
-  /* margin-bottom: 20px; */
+  margin-bottom: 20px;
 }
 
 .humidity p,
 .wind p {
   padding: 30px;
   font-weight: 500;
+  color: white;
   font-family: "Madimi One", sans-serif;
 }
 
-.weather-icon img,
-.humidity img,
-.wind img {
+.weather-icon img {
   width: 150px;
   height: 150px;
 }
@@ -155,15 +156,29 @@ to{
 }
 }
 
-.hum{
-  animation: ii 3s infinite;
+.sidebar{
+  position: absolute;
+  background-color: white;
+  top: 50%;
+  height: 10vh;
+  display: block;
+  width: 10vh;
 }
 
-@keyframes ii {
-  0%{
-    transform: perspective(10px);
-  }
-  100%{
-    transform: perspective(50px);
-  }
+.hw{
+  backdrop-filter: blur(10px);
+  justify-content: space-between;
+  display: flex;
+  align-self: flex-start;
+  box-shadow: 20px 10px 41px 0px black;
+  border-radius: 10px ;
+}
+
+.hw div{
+
+  padding: 30px;
+  border-right: 1px solid ghostwhite;
+  backdrop-filter: blur(100px);
+  z-index: 11;
+ 
 }
