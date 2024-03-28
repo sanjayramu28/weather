@@ -42,7 +42,7 @@
   justify-content: flex-end;
   margin: 10px;
   position: relative;
-  top: -90vh;
+  top: -60vh;
   overflow: scroll;
   height: 33vh;
   text-wrap: wrap;
@@ -52,10 +52,8 @@
 }
 
 .less {
-  display: flex;
   cursor: pointer;
   height: 70px;
-  /* margin-right: 20px; */
   animation: fro 2s infinite;
   
 }
@@ -160,9 +158,40 @@ to{
   position: absolute;
   background-color: white;
   top: 50%;
-  height: 10vh;
+  height: auto;
+  width: auto;
   display: block;
-  width: 10vh;
+  margin: 20px;
+  border-radius: 20px ;
+}
+
+.side-font{
+  padding: 10px;
+  width: 60px;
+  font-size: 30px;
+  color: rgb(6, 213, 240);
+  cursor: pointer;
+}
+.sidebar label{
+  transition: 2s ;
+ 
+}
+.tim{
+  animation: somet 3s ;
+}
+
+@keyframes somet {
+  from {
+opacity: 0;  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sidebar label:hover{
+  transform: rotate(360deg);
+  transform: skewX(10px);
+  color: green
 }
 
 .hw{
@@ -181,4 +210,14 @@ to{
   backdrop-filter: blur(100px);
   z-index: 11;
  
+}
+
+
+@media screen and (max-width:720px) {
+  .wha{
+    display: block;
+    /* margin-left: 50%; */
+    width: auto;
+  }
+  
 }

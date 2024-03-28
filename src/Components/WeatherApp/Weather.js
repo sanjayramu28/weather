@@ -20,13 +20,16 @@ import thunder_bg from '../Assests/thunderBg.jpg'
 import snow_bg from '../Assests/snowBg.jpg'
 import mist_bg from '../Assests/mistbg.avif'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faMagnifyingGlass, faSun } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 
 const Weather = () => {
   const [data, Setdata] = useState('')
   const [descript, Setdescript] = useState(clear_skyBg)
   const [countryName,SetcountryName]=useState()
   const [locTime,SetlocTime]=useState()
+  const [over,Setover]=useState(false)
+  const [sunrise,Setsunrise]=useState()
 
 
   let fun_facts_10 = ['10 degrees Celsius is generally considered a comfortable temperature for many people. It\'s cool but not too cold, making it pleasant for outdoor activities.',
@@ -67,6 +70,10 @@ const Weather = () => {
     let timedata=await response.json();
     // let localTime=timedata.date_time;
     SetlocTime(timedata.date_time)
+    let sunrise1=data.sys.sunrise;
+    let timezone=data.timezone;
+    Setsunrise(moment.utc(sunrise1,'X').add(timezone,'seconds').format('HH:mm a'));
+    console.log(sunrise)
   }
  
   
@@ -91,7 +98,6 @@ const Weather = () => {
     let Location = document.getElementsByClassName('Loc');
     let humidity = document.getElementsByClassName('humidityp')
     let wind = document.getElementsByClassName('windp');
-    let country1=data1.sys.country;
     SetcountryName(data1.sys.country)
     temperature[0].innerHTML = data1.main.temp.toFixed() + "   °C";
     Location[0].innerHTML = data1.name;
@@ -129,12 +135,13 @@ const Weather = () => {
     else if (data1.weather[0].icon == "50d" || data1.weather[0].icon == "50n") {
       Seticon(mist)
     }
+    timezone();
+    background();
   }
   let fact1 = '';
 
   const fun_facts = () => {
     let i = Math.floor(Math.random() * 5);
-    console.log(i);
     if (data.main.temp >= 1 && data.main.temp <= 20) {
       fact1 = fun_facts_10[i];
       console.log(fact1)
@@ -152,7 +159,6 @@ const Weather = () => {
   }
 
   const background = () => {
-    const bg = document.getElementsByClassName("weat")
     if (data.weather[0].description === "clear sky") {
       Setdescript(clear_skyBg)
     }
@@ -188,6 +194,16 @@ const Weather = () => {
     const less1 = document.getElementsByClassName('less1');
     less1[0].style.display = 'none';
   }
+  
+
+  const sidebar=()=>{
+   if(over==true){
+    Setover(false)
+   }
+   else if(over==false){
+    Setover(true)
+   }
+  }
 
 
   return (
@@ -209,7 +225,18 @@ const Weather = () => {
           </div>
 
           <div className='sidebar'>
-            <div className='local-time'>
+            <div className='local-time' >
+            <label onMouseOver={()=>{
+              sidebar()
+            }}><FontAwesomeIcon icon={faClock} className='side-font' /></label>
+             {over && <p className='tim'>{locTime}</p>}
+            </div>
+            <div className='sun-rise'>
+            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
+              <p className='tim'> iugyug</p>
+            </div>
+            <div className='sun-set'>
+            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
               <p>{locTime}</p>
             </div>
           </div>
