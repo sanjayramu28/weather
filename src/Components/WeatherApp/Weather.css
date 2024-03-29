@@ -42,7 +42,7 @@
   justify-content: flex-end;
   margin: 10px;
   position: relative;
-  top: -60vh;
+  top: -50%;
   overflow: scroll;
   height: 33vh;
   text-wrap: wrap;
@@ -123,13 +123,13 @@
   align-items: center;
   justify-content: space-evenly;
   color: white;
-  font-size: 30px;
+  font-size: 20px;
   margin-bottom: 20px;
 }
 
 .humidity p,
 .wind p {
-  padding: 30px;
+  padding: 10px;
   font-weight: 500;
   color: white;
   font-family: "Madimi One", sans-serif;
@@ -163,20 +163,27 @@ to{
   display: block;
   margin: 20px;
   border-radius: 20px ;
+  transition: 3s;
 }
 
 .side-font{
   padding: 10px;
   width: 60px;
   font-size: 30px;
+  
   color: rgb(6, 213, 240);
   cursor: pointer;
 }
 .sidebar label{
   transition: 2s ;
- 
+  display: flex;
+  align-items: center;
+ justify-content: center;
 }
 .tim{
+  display: flex;
+  justify-content: center;
+  padding: 10px;
   animation: somet 3s ;
 }
 
@@ -186,6 +193,9 @@ opacity: 0;  }
   to {
     opacity: 1;
   }
+}
+.windp label{
+  text-wrap: nowrap;
 }
 
 .sidebar label:hover{

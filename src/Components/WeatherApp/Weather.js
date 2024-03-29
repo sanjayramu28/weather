@@ -24,12 +24,16 @@ import { faClock, faMagnifyingGlass, faSun } from '@fortawesome/free-solid-svg-i
 import moment from 'moment';
 
 const Weather = () => {
-  const [data, Setdata] = useState('')
+  let [data, Setdata] = useState('')
   const [descript, Setdescript] = useState(clear_skyBg)
-  const [countryName,SetcountryName]=useState()
-  const [locTime,SetlocTime]=useState()
-  const [over,Setover]=useState(false)
-  const [sunrise,Setsunrise]=useState()
+  const [countryName, SetcountryName] = useState()
+  let [locTime, SetlocTime] = useState()
+  const [over, Setover] = useState(false)
+  let [sunrise, Setsunrise] = useState()
+  let [sunset,setsunset]=useState()
+  const [loading,Setloading]=useState(false)
+  let [min_temp,setmintemp]=useState()
+  let [max_temp  ,setmaxtemp]=useState()
 
 
   let fun_facts_10 = ['10 degrees Celsius is generally considered a comfortable temperature for many people. It\'s cool but not too cold, making it pleasant for outdoor activities.',
@@ -56,83 +60,113 @@ const Weather = () => {
   const [icon, Seticon] = useState()
   const val = document.getElementsByClassName("location");
   const api_key = 'a9341607da913584e1d9eff1389385f7';
+  // const fetch = async () => {
+  //   let url = `https://api.openweathermap.org/data/2.5/weather?q=${val[0].value}&units=metric&appid=${api_key}`
+  //   let response = await fetch(url);
+  //   data = await response.json();
+  //   Setdata(data);
+  //   console.log(data)
+  // }
+  useEffect(() => {
+    val[0].value = "Tiruchengode"
 
-  useEffect(()=>{
-    val[0].value="Tiruchengode"
-    
+    // fetch();
     search();
-  },[])
+    // Setdata(data);
+    // timezone()
+  }, [])
 
-  const timezone=async ()=>{
-    let timeapi="9d5ec08b7e2b44d7b14221668430299c";
-    let url=`https://api.ipgeolocation.io/timezone?apiKey=${timeapi}&location=${val[0].value},%20${countryName}`
-    let response=await fetch(url);
-    let timedata=await response.json();
-    // let localTime=timedata.date_time;
-    SetlocTime(timedata.date_time)
-    let sunrise1=data.sys.sunrise;
-    let timezone=data.timezone;
-    Setsunrise(moment.utc(sunrise1,'X').add(timezone,'seconds').format('HH:mm a'));
-    console.log(sunrise)
+  const timezone = async () => {
+    let response;
+    let timeapi = "9d5ec08b7e2b44d7b14221668430299c";
+    let url = `https://api.ipgeolocation.io/timezone?apiKey=${timeapi}&location=${val[0].value},%20${countryName}`
+    try{
+      Setloading(true)
+       response = await fetch(url);
+    }
+    
+    catch{
+      console.error('error')
+    }
+    Setloading(false)
+    let timedata = await response.json();
+    locTime=timedata.time_12
+    SetlocTime(locTime)
+    if(!response.ok){
+      Setloading(true)
+      // console.log(response)
+    }
+    console.log(timedata)
+    sunrise = (moment.utc(data.sys.sunrise, 'X').add(data.timezone, 'seconds').format('HH:mm a'));
+    Setsunrise(sunrise)
+    sunset=(moment.utc(data.sys.sunset,'X').add(data.timezone,'seconds').format('HH:MM a'))
+    setsunset(sunset)
+    console.log("sun");
+    console.log(sunrise);
+    console.log(locTime);
   }
- 
-  
-  const search = async () => {
 
+
+  const search = async () => {
+    let response;
     if (val[0].value === '') {
       window.alert("Enter Location to Continue");
-    }    
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${val[0].value}&units=metric&appid=${api_key}`
-    try{
-          let response = await fetch(url);
-    if(!response.ok){
-      throw new Error()
     }
-          var data1 = await response.json();
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${val[0].value}&units=metric&appid=${api_key}`
+    try{ 
+      Setloading(true)
+      response = await fetch(url);
     }
     catch{
-      console.log("FGf")
+      console.log("search err")
     }
-    Setdata(data1);
+    Setloading(false)
+    data = await response.json();
+    Setdata(data);
+    min_temp=data.main.temp_min;
+    setmintemp(min_temp)
+    max_temp=data.main.temp_max;
+    setmaxtemp(max_temp)
     let temperature = document.getElementsByClassName('temperature');
     let Location = document.getElementsByClassName('Loc');
     let humidity = document.getElementsByClassName('humidityp')
     let wind = document.getElementsByClassName('windp');
-    SetcountryName(data1.sys.country)
-    temperature[0].innerHTML = data1.main.temp.toFixed() + "   °C";
-    Location[0].innerHTML = data1.name;
-    humidity[0].innerHTML = data1.main.humidity + " %";
-    wind[0].innerHTML = data1.wind.speed + " M/H";
+    // let country1 = data.sys.country;
+    SetcountryName(data.sys.country)
+    temperature[0].innerHTML = data.main.temp.toFixed() + "   °C";
+    Location[0].innerHTML = data.name;
+    humidity[0].innerHTML = data.main.humidity + " %";
+    wind[0].innerHTML = data.wind.speed + " M/H";
     var time = new Date()
     const timee = document.getElementsByClassName("time")
     timee[0].innerHTML = time
-  
 
-    if (data1.weather[0].icon == "01d" || data1.weather[0].icon == "01n") {
+
+    if (data.weather[0].icon == "01d" || data.weather[0].icon == "01n") {
       Seticon(clear_sky)
     }
-    else if (data1.weather[0].icon == "02d" || data1.weather[0].icon == "02n") {
+    else if (data.weather[0].icon == "02d" || data.weather[0].icon == "02n") {
       Seticon(few_clouds)
     }
-    else if (data1.weather[0].icon == "03d" || data1.weather[0].icon == "03n") {
+    else if (data.weather[0].icon == "03d" || data.weather[0].icon == "03n") {
       Seticon(scattered_clouds)
     }
-    else if (data1.weather[0].icon == "04d" || data1.weather[0].icon == "04n") {
+    else if (data.weather[0].icon == "04d" || data.weather[0].icon == "04n") {
       Seticon(scattered_clouds)
     }
-    else if (data1.weather[0].icon == "09d" || data1.weather[0].icon == "09n") {
+    else if (data.weather[0].icon == "09d" || data.weather[0].icon == "09n") {
       Seticon(shower_rain)
     }
-    else if (data1.weather[0].icon == "10d" || data1.weather[0].icon == "10n") {
+    else if (data.weather[0].icon == "10d" || data.weather[0].icon == "10n") {
       Seticon(rain)
     }
-    else if (data1.weather[0].icon == "11d" || data1.weather[0].icon == "11n") {
+    else if (data.weather[0].icon == "11d" || data.weather[0].icon == "11n") {
       Seticon(thunder)
     }
-    else if (data1.weather[0].icon == "13d" || data1.weather[0].icon == "13n") {
+    else if (data.weather[0].icon == "13d" || data.weather[0].icon == "13n") {
       Seticon(snow)
     }
-    else if (data1.weather[0].icon == "50d" || data1.weather[0].icon == "50n") {
+    else if (data.weather[0].icon == "50d" || data.weather[0].icon == "50n") {
       Seticon(mist)
     }
     timezone();
@@ -156,6 +190,7 @@ const Weather = () => {
 
     const fact = document.getElementsByClassName('facts');
     fact[0].innerHTML = fact1
+
   }
 
   const background = () => {
@@ -194,75 +229,75 @@ const Weather = () => {
     const less1 = document.getElementsByClassName('less1');
     less1[0].style.display = 'none';
   }
-  
 
-  const sidebar=()=>{
-   if(over==true){
-    Setover(false)
-   }
-   else if(over==false){
-    Setover(true)
-   }
+
+  const enter = () => {
+      Setover(true)
   }
 
+  const leave=()=>{
+    Setover(false)
+  }
 
   return (
     <div className='wha'>
-        <div className='weat' style={{ backgroundImage: `url(${descript})` }}>
-          <div className='weather-container'>
-            <div className="city-Input">
-              <input type='text' placeholder='Search' className='location' />
-              <FontAwesomeIcon icon={faMagnifyingGlass} className='weather-img' onClick={() => { search(); background();timezone() }} />
-            </div>
-          </div>
-          <div className='timestamp'>
-            <p className='time'></p>
-          </div>
-          <div className='weather-icon'>
-            <img src={icon} className='weather-icon1' />
-            <p className='temperature'></p>
-            <p className='Loc'> </p>
-          </div>
-
-          <div className='sidebar'>
-            <div className='local-time' >
-            <label onMouseOver={()=>{
-              sidebar()
-            }}><FontAwesomeIcon icon={faClock} className='side-font' /></label>
-             {over && <p className='tim'>{locTime}</p>}
-            </div>
-            <div className='sun-rise'>
-            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
-              <p className='tim'> iugyug</p>
-            </div>
-            <div className='sun-set'>
-            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
-              <p>{locTime}</p>
-            </div>
-          </div>
-
-          <div className=" hw">
-            <div className='col-lg-4 humidity'>
-              <img src='https://cdn-icons-png.flaticon.com/128/6566/6566344.png' className='hum' />
-              <p className='humidityp'></p>
-            </div>
-            <div className='col-lg-4 wind'>
-              <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png' />
-              <p className='windp'></p>
-            </div>
-            <div className='col-lg-4 wind'>
-              <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png' />
-              <p className='windp'>jghj</p>
-            </div>
-          </div>
-          <div className='fun-facts col'>
-            <img src={open} className='less' alt='Expand ' onClick={() => { fun_facts(); show() }} />
-            <img src={close} className='less1' onClick={() => { hide() }} />
-            <p className='facts'></p>
+      <div className='weat' style={{ backgroundImage: `url(${descript})` }}>
+        <div className='weather-container'>
+          <div className="city-Input">
+            <input type='text' placeholder='Search' className='location' />
+            <FontAwesomeIcon icon={faMagnifyingGlass} className='weather-img' onClick={() => { search(); background(); timezone() }} />
           </div>
         </div>
+        <div className='timestamp'>
+          <p className='time'></p>
+        </div>
+        <div className='weather-icon'>
+          <img src={icon} className='weather-icon1' />
+          <p className='temperature'></p>
+          <p className='Loc'> </p>
+        </div>
+
+        <div className='sidebar'>
+          <div className='local-time' >
+            <label onMouseEnter={()=>{enter() }} onMouseLeave={()=>{leave()}}><FontAwesomeIcon icon={faClock} className='side-font' /></label>
+            {over && <label className='tim'>{locTime}</label>}
+          </div>
+          <div className='sun-rise'>
+            <label onMouseEnter={()=>{enter() }} onMouseLeave={()=>{leave()}}><FontAwesomeIcon icon={faSun} className='side-font' /></label>
+            {over &&<label className='tim'> {sunrise}</label>}
+          </div>
+          <div className='sun-set'>
+            <label onMouseEnter={()=>{enter() }} onMouseLeave={()=>{leave()}}><FontAwesomeIcon icon={faSun} className='side-font' /></label>
+            {over&&<label className='tim'>{sunset}</label>}
+          </div>
+        </div>
+
+        <div className=" hw">
+          <div className='col-lg-4 humidity'>
+            <img src='https://cdn-icons-png.flaticon.com/128/6566/6566344.png' className='hum' />
+            <p className='humidityp'></p>
+          </div>
+          <div className='col-lg-4 wind'>
+            <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png' />
+            <p className='windp'></p>
+          </div>
+          <div className='col-lg-4 wind'>
+            <p className='windp'>
+              <label>min Temp:{min_temp}</label>
+              <br/>
+              <label>Max Temp:{max_temp}</label>
+            </p>
+          </div>
+        </div>
+        <div className='fun-facts col'>
+          <img src={open} className='less' alt='Expand ' onClick={() => { fun_facts(); show() }} />
+          <img src={close} className='less1' onClick={() => { hide() }} />
+          <p className='facts'></p>
+        </div>
       </div>
+    </div>
   )
+  // {loading ? console.log(loading): <>Search</>}
 }
 
 export default Weather
