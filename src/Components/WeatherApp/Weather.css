@@ -42,13 +42,14 @@
   justify-content: flex-end;
   margin: 10px;
   position: relative;
-  top: -50%;
+  top: -90vh;
+  /* right: 25%; */
   overflow: scroll;
   height: 33vh;
   text-wrap: wrap;
   scrollbar-width: none;   
   float: right;
-  width: 40%;
+  width: 40vh;
 }
 
 .less {
@@ -157,20 +158,21 @@ to{
 .sidebar{
   position: absolute;
   background-color: white;
-  top: 50%;
+  top: 40%;
   height: auto;
   width: auto;
   display: block;
   margin: 20px;
   border-radius: 20px ;
   transition: 3s;
+  cursor: pointer;
 }
+
 
 .side-font{
   padding: 10px;
   width: 60px;
   font-size: 30px;
-  
   color: rgb(6, 213, 240);
   cursor: pointer;
 }
@@ -198,11 +200,6 @@ opacity: 0;  }
   text-wrap: nowrap;
 }
 
-.sidebar label:hover{
-  transform: rotate(360deg);
-  transform: skewX(10px);
-  color: green
-}
 
 .hw{
   backdrop-filter: blur(10px);
@@ -229,5 +226,12 @@ opacity: 0;  }
     /* margin-left: 50%; */
     width: auto;
   }
+
+  
+}
+@media screen and (max-width:1000px) {
+ .fun-facts{
+  top: -65vh;
+ }
   
 }

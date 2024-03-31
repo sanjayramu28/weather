@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import './Weather.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
+
 import clear_sky from '../Assests/clear-sky.png';
 import few_clouds from '../Assests/cloud.png';
 import scattered_clouds from '../Assests/clouds.png';
@@ -30,10 +33,11 @@ const Weather = () => {
   let [locTime, SetlocTime] = useState()
   const [over, Setover] = useState(false)
   let [sunrise, Setsunrise] = useState()
-  let [sunset,setsunset]=useState()
-  const [loading,Setloading]=useState(false)
-  let [min_temp,setmintemp]=useState()
-  let [max_temp  ,setmaxtemp]=useState()
+  let [sunset, setsunset] = useState()
+  let [loading, Setloading] = useState(true)
+  let [min_temp, setmintemp] = useState()
+  let [max_temp, setmaxtemp] = useState()
+  const [error, seterror] = useState()
 
 
   let fun_facts_10 = ['10 degrees Celsius is generally considered a comfortable temperature for many people. It\'s cool but not too cold, making it pleasant for outdoor activities.',
@@ -60,52 +64,36 @@ const Weather = () => {
   const [icon, Seticon] = useState()
   const val = document.getElementsByClassName("location");
   const api_key = 'a9341607da913584e1d9eff1389385f7';
-  // const fetch = async () => {
-  //   let url = `https://api.openweathermap.org/data/2.5/weather?q=${val[0].value}&units=metric&appid=${api_key}`
-  //   let response = await fetch(url);
-  //   data = await response.json();
-  //   Setdata(data);
-  //   console.log(data)
-  // }
+
+
   useEffect(() => {
     val[0].value = "Tiruchengode"
-
-    // fetch();
     search();
-    // Setdata(data);
-    // timezone()
+    Setloading(true)
+    setTimeout(()=>{
+      Setloading(false)
+    },5000)
   }, [])
 
   const timezone = async () => {
     let response;
     let timeapi = "9d5ec08b7e2b44d7b14221668430299c";
     let url = `https://api.ipgeolocation.io/timezone?apiKey=${timeapi}&location=${val[0].value},%20${countryName}`
-    try{
-      Setloading(true)
-       response = await fetch(url);
-    }
-    
-    catch{
-      console.error('error')
-    }
-    Setloading(false)
+    response = await fetch(url);
+    // Setloading(false)
     let timedata = await response.json();
-    locTime=timedata.time_12
+    locTime = timedata.time_12
     SetlocTime(locTime)
-    if(!response.ok){
-      Setloading(true)
-      // console.log(response)
-    }
-    console.log(timedata)
+    // if (!response.ok) {
+    //   Setloading(true)
+    //   // console.log(response)
+    // }
+    // console.log(timedata)
     sunrise = (moment.utc(data.sys.sunrise, 'X').add(data.timezone, 'seconds').format('HH:mm a'));
     Setsunrise(sunrise)
-    sunset=(moment.utc(data.sys.sunset,'X').add(data.timezone,'seconds').format('HH:MM a'))
+    sunset = (moment.utc(data.sys.sunset, 'X').add(data.timezone, 'seconds').format('HH:MM a'))
     setsunset(sunset)
-    console.log("sun");
-    console.log(sunrise);
-    console.log(locTime);
   }
-
 
   const search = async () => {
     let response;
@@ -113,19 +101,29 @@ const Weather = () => {
       window.alert("Enter Location to Continue");
     }
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${val[0].value}&units=metric&appid=${api_key}`
-    try{ 
-      Setloading(true)
+    try {
       response = await fetch(url);
+     
+      if (!response.ok) {
+        const errorMessage = await response.text(); 
+        throw new Error(errorMessage); 
+      }
+      data = await response.json();
+      Setdata(data);
+      render();
+      loading=false
+      console.log(loading);
     }
-    catch{
-      console.log("search err")
+    catch (err) {
+      window.alert(err.message)
     }
-    Setloading(false)
-    data = await response.json();
-    Setdata(data);
-    min_temp=data.main.temp_min;
+
+  }
+
+  const render = () => {
+    min_temp = data.main.temp_min;
     setmintemp(min_temp)
-    max_temp=data.main.temp_max;
+    max_temp = data.main.temp_max;
     setmaxtemp(max_temp)
     let temperature = document.getElementsByClassName('temperature');
     let Location = document.getElementsByClassName('Loc');
@@ -178,11 +176,9 @@ const Weather = () => {
     let i = Math.floor(Math.random() * 5);
     if (data.main.temp >= 1 && data.main.temp <= 20) {
       fact1 = fun_facts_10[i];
-      console.log(fact1)
     }
     else if (data.main.temp >= 20 && data.main.temp <= 30) {
       fact1 = fun_facts_30[i];
-      console.log(fact1)
     }
     else if (data.main.temp >= 30 && data.main.temp <= 50) {
       fact1 = fun_facts_30[i];
@@ -206,8 +202,6 @@ const Weather = () => {
     if (data.weather[0].description === "broken clouds") {
       Setdescript(scattered_clousBg)
     }
-    console.log(data.weather[0].description)
-    console.log(descript)
   }
 
   const show = () => {
@@ -232,10 +226,10 @@ const Weather = () => {
 
 
   const enter = () => {
-      Setover(true)
+    Setover(true)
   }
 
-  const leave=()=>{
+  const leave = () => {
     Setover(false)
   }
 
@@ -257,18 +251,33 @@ const Weather = () => {
           <p className='Loc'> </p>
         </div>
 
-        <div className='sidebar'>
+        <div className='sidebar' onMouseEnter={() => { enter() }} onMouseLeave={() => { leave() }} >
           <div className='local-time' >
-            <label onMouseEnter={()=>{enter() }} onMouseLeave={()=>{leave()}}><FontAwesomeIcon icon={faClock} className='side-font' /></label>
-            {over && <label className='tim'>{locTime}</label>}
+            <label ><FontAwesomeIcon icon={faClock} className='side-font' /></label>
+            {over &&
+              <>
+                <label className='tim'  >Local Time:</label>
+                <label className='tim'>
+                  {locTime}
+                </label>
+              </>
+            }
           </div>
           <div className='sun-rise'>
-            <label onMouseEnter={()=>{enter() }} onMouseLeave={()=>{leave()}}><FontAwesomeIcon icon={faSun} className='side-font' /></label>
-            {over &&<label className='tim'> {sunrise}</label>}
+            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
+            {over &&
+              <>
+                <label className='tim'>Expected Sunrise:</label>
+                <label className='tim'> {sunrise}</label>
+              </>}
           </div>
           <div className='sun-set'>
-            <label onMouseEnter={()=>{enter() }} onMouseLeave={()=>{leave()}}><FontAwesomeIcon icon={faSun} className='side-font' /></label>
-            {over&&<label className='tim'>{sunset}</label>}
+            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
+            {over &&
+              <>
+                <label>Expected Sunset:</label>
+                <label className='tim'>{sunset}</label>
+              </>}
           </div>
         </div>
 
@@ -283,13 +292,13 @@ const Weather = () => {
           </div>
           <div className='col-lg-4 wind'>
             <p className='windp'>
-              <label>min Temp:{min_temp}</label>
-              <br/>
+              <label>Min Temp:{min_temp}</label>
+              <br />
               <label>Max Temp:{max_temp}</label>
             </p>
           </div>
         </div>
-        <div className='fun-facts col'>
+        <div className='fun-facts col-lg-6'>
           <img src={open} className='less' alt='Expand ' onClick={() => { fun_facts(); show() }} />
           <img src={close} className='less1' onClick={() => { hide() }} />
           <p className='facts'></p>
@@ -297,7 +306,6 @@ const Weather = () => {
       </div>
     </div>
   )
-  // {loading ? console.log(loading): <>Search</>}
 }
 
 export default Weather
