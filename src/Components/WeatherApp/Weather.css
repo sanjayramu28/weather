@@ -1,22 +1,15 @@
-.wha{
-  display: flex;
-  justify-content: center;
+.wha {
+  /* width: 10%; */
 }
-.weat{
-  width: 100vh;
-  /* background: linear-gradient(90deg, rgba(214, 213, 226, 1) 0%, rgba(156, 156, 252, 1) 35%, rgba(0, 212, 255, 1) 100%); */
-  /* background-image: url('../Assests/few-cloudsBg.jpeg'); */
+
+.weat {
   background-size: cover;
   background-repeat: no-repeat;
   border-radius: 20px;
-  
 }
 
-
 .city-Input {
-  margin-top: 5vh;
   display: flex;
-
 }
 
 .city-Input input {
@@ -25,7 +18,7 @@
   outline: none;
   padding: 30px;
   border: 0px;
-  border-radius: 60px; 
+  border-radius: 60px;
 }
 
 .weather-img {
@@ -41,13 +34,15 @@
   display: flex;
   justify-content: flex-end;
   margin: 10px;
-  position: relative;
-  top: -90vh;
-  /* right: 25%; */
+  position: absolute;
+  top: 60%;
+  right: 30%;
+  transform: translateY(-50%);
+  /* z-index: 100; */
   overflow: scroll;
   height: 33vh;
   text-wrap: wrap;
-  scrollbar-width: none;   
+  scrollbar-width: none;
   float: right;
   width: 40vh;
 }
@@ -56,7 +51,6 @@
   cursor: pointer;
   height: 70px;
   animation: fro 2s infinite;
-  
 }
 
 @keyframes fro {
@@ -93,8 +87,6 @@
   font-size: 30px;
 }
 
-
-
 .weather-icon {
   display: flex;
   justify-content: center;
@@ -106,12 +98,11 @@
 .timestamp p {
   color: white;
   text-align: center;
-  /* font-size: 50px; */
   margin-top: 10px;
   font-weight: 600;
 }
 
-.weather-icon p{
+.weather-icon p {
   color: white;
   font-size: 50px;
   margin-top: 10px;
@@ -128,9 +119,11 @@
   margin-bottom: 20px;
 }
 
+
+
 .humidity p,
 .wind p {
-  padding: 10px;
+  /* padding: 10px; */
   font-weight: 500;
   color: white;
   font-family: "Madimi One", sans-serif;
@@ -142,20 +135,20 @@
 }
 
 .wind img {
-  animation: scale 3s linear  infinite alternate;
-  /* animation-timeline: view(auto); Default */
-}
+
+  width: 100px;}
 
 @keyframes scale {
-from{
-  transform: scaleX(.6);
-}  
-to{
-  transform: scaleX(.8);
-}
+  from {
+    transform: scaleX(.6);
+  }
+
+  to {
+    transform: scaleX(.8);
+  }
 }
 
-.sidebar{
+.sidebar {
   position: absolute;
   background-color: white;
   top: 40%;
@@ -163,75 +156,117 @@ to{
   width: auto;
   display: block;
   margin: 20px;
-  border-radius: 20px ;
+  border-radius: 20px;
   transition: 3s;
   cursor: pointer;
 }
 
 
-.side-font{
+.side-font {
   padding: 10px;
   width: 60px;
   font-size: 30px;
   color: rgb(6, 213, 240);
   cursor: pointer;
 }
-.sidebar label{
-  transition: 2s ;
+
+.sidebar label {
+  transition: 2s;
   display: flex;
   align-items: center;
- justify-content: center;
+  justify-content: center;
 }
-.tim{
+
+.tim {
   display: flex;
   justify-content: center;
   padding: 10px;
-  animation: somet 3s ;
+  animation: somet 3s;
 }
 
 @keyframes somet {
   from {
-opacity: 0;  }
+    opacity: 0;
+  }
+
   to {
     opacity: 1;
   }
 }
-.windp label{
+
+.windp label {
   text-wrap: nowrap;
 }
 
 
-.hw{
+.hw {
+  position: relative;
   backdrop-filter: blur(10px);
   justify-content: space-between;
   display: flex;
   align-self: flex-start;
   box-shadow: 20px 10px 41px 0px black;
-  border-radius: 10px ;
+  border-radius: 10px;
 }
 
-.hw div{
+.hw div {
 
   padding: 30px;
   border-right: 1px solid ghostwhite;
   backdrop-filter: blur(100px);
   z-index: 11;
- 
+
 }
+
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 2px solid #FFF;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+.loader::after {
+  content: '';  
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  background: #FF3D00;
+  width: 3px;
+  height: 24px;
+  transform: translateX(-50%);
+}
+    
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 
 
 
 @media screen and (max-width:720px) {
-  .wha{
+  .wha {
     display: block;
     /* margin-left: 50%; */
-    width: auto;
+    /* width: aut; */
   }
 
-  
+
 }
+
 @media screen and (max-width:1000px) {
- .fun-facts{
-  top: -65vh;
- }
-  
+  .fun-facts {
+    /* top: -65vh; */
+  }
+
 }
+

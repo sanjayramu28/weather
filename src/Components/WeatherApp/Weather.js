@@ -29,6 +29,7 @@ import moment from 'moment';
 const Weather = () => {
   let [data, Setdata] = useState('')
   const [descript, Setdescript] = useState(clear_skyBg)
+  const [loader, setloader] = useState(false);
   const [countryName, SetcountryName] = useState()
   let [locTime, SetlocTime] = useState()
   const [over, Setover] = useState(false)
@@ -70,9 +71,9 @@ const Weather = () => {
     val[0].value = "Tiruchengode"
     search();
     Setloading(true)
-    setTimeout(()=>{
+    setTimeout(() => {
       Setloading(false)
-    },5000)
+    }, 5000)
   }, [])
 
   const timezone = async () => {
@@ -80,43 +81,50 @@ const Weather = () => {
     let timeapi = "9d5ec08b7e2b44d7b14221668430299c";
     let url = `https://api.ipgeolocation.io/timezone?apiKey=${timeapi}&location=${val[0].value},%20${countryName}`
     response = await fetch(url);
-    // Setloading(false)
     let timedata = await response.json();
     locTime = timedata.time_12
     SetlocTime(locTime)
-    // if (!response.ok) {
-    //   Setloading(true)
-    //   // console.log(response)
-    // }
-    // console.log(timedata)
     sunrise = (moment.utc(data.sys.sunrise, 'X').add(data.timezone, 'seconds').format('HH:mm a'));
     Setsunrise(sunrise)
     sunset = (moment.utc(data.sys.sunset, 'X').add(data.timezone, 'seconds').format('HH:MM a'))
     setsunset(sunset)
   }
 
-  const search = async () => {
+  const formsubmit = (e) => {
+    e.preventDefault();
+    search();
+    background();
+    timezone();
+  }
+
+  const search = async (e) => {
+
     let response;
     if (val[0].value === '') {
       window.alert("Enter Location to Continue");
     }
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${val[0].value}&units=metric&appid=${api_key}`
     try {
+      setloader(true);
+      // Seticon(null)
       response = await fetch(url);
-     
+
       if (!response.ok) {
-        const errorMessage = await response.text(); 
-        throw new Error(errorMessage); 
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
       }
       data = await response.json();
       Setdata(data);
       render();
-      loading=false
+      loading = false
       console.log(loading);
     }
     catch (err) {
+
+      setloader(false);
       window.alert(err.message)
     }
+    setloader(false);
 
   }
 
@@ -234,77 +242,94 @@ const Weather = () => {
   }
 
   return (
-    <div className='wha'>
-      <div className='weat' style={{ backgroundImage: `url(${descript})` }}>
-        <div className='weather-container'>
-          <div className="city-Input">
-            <input type='text' placeholder='Search' className='location' />
-            <FontAwesomeIcon icon={faMagnifyingGlass} className='weather-img' onClick={() => { search(); background(); timezone() }} />
-          </div>
-        </div>
-        <div className='timestamp'>
-          <p className='time'></p>
-        </div>
-        <div className='weather-icon'>
-          <img src={icon} className='weather-icon1' />
-          <p className='temperature'></p>
-          <p className='Loc'> </p>
-        </div>
-
-        <div className='sidebar' onMouseEnter={() => { enter() }} onMouseLeave={() => { leave() }} >
-          <div className='local-time' >
-            <label ><FontAwesomeIcon icon={faClock} className='side-font' /></label>
-            {over &&
-              <>
-                <label className='tim'  >Local Time:</label>
-                <label className='tim'>
-                  {locTime}
-                </label>
-              </>
+    <>
+      <div className='d-flex justify-content-center'>
+        <div className='wha'>
+          <div className='weat' style={{ backgroundImage: `url(${descript})` }}>
+            <div className='weather-container'>
+              <div className="city-Input">
+                <form onSubmit={(e) => { formsubmit(e) }} className='d-flex w-100'>
+                  <input type='text' placeholder='Search' className='location ' />
+                  <button type='submit' className='btn'>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} className='weather-img' onClick={() => { search(); background(); timezone() }} />
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div className='timestamp'>
+              <p className='time'></p>
+            </div>
+            {
+              loader &&
+              (
+                <span className="loader"></span>
+              )
             }
-          </div>
-          <div className='sun-rise'>
-            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
-            {over &&
-              <>
-                <label className='tim'>Expected Sunrise:</label>
-                <label className='tim'> {sunrise}</label>
-              </>}
-          </div>
-          <div className='sun-set'>
-            <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
-            {over &&
-              <>
-                <label>Expected Sunset:</label>
-                <label className='tim'>{sunset}</label>
-              </>}
-          </div>
-        </div>
+            <div className='weather-icon'>
+              <img src={icon} className='weather-icon1' />
+              <p className='temperature'></p>
+              <p className='Loc'> </p>
+            </div>
 
-        <div className=" hw">
-          <div className='col-lg-4 humidity'>
-            <img src='https://cdn-icons-png.flaticon.com/128/6566/6566344.png' className='hum' />
-            <p className='humidityp'></p>
+            <div className='sidebar' onMouseEnter={() => { enter() }} onMouseLeave={() => { leave() }} >
+              <div className='local-time' >
+                <label ><FontAwesomeIcon icon={faClock} className='side-font' /></label>
+                {
+                  over &&
+                  <>
+                    <label className='tim'  >Local Time:</label>
+                    <label className='tim'>
+                      {locTime}
+                    </label>
+                  </>
+                }
+              </div>
+              <div className='sun-rise'>
+                <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
+                {
+                  over &&
+                  <>
+                    <label className='tim'>Expected Sunrise:</label>
+                    <label className='tim'> {sunrise}</label>
+                  </>}
+              </div>
+              <div className='sun-set'>
+                <label><FontAwesomeIcon icon={faSun} className='side-font' /></label>
+                {over &&
+                  <>
+                    <label>Expected Sunset:</label>
+                    <label className='tim'>{sunset}</label>
+                  </>}
+              </div>
+            </div>
+            <div className="hw">
+              <div className='col-md-4 humidity'>
+                <p>Humidity :</p>
+                {/* <img src='https://cdn-icons-png.flaticon.com/128/6566/6566344.png' className='hum' /> */}
+                <p className='humidityp'></p>
+              </div>
+              <div className='col-md-4 wind'>
+                <p>Wind Speed:</p>
+                {/* <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png' /> */}
+                <p className='windp'></p>
+              </div>
+              <div className='col-md-4 wind'>
+                <p className='windp'>
+                  <label>Min Temp:{min_temp}</label>
+                  <br />
+                  <label>Max Temp:{max_temp}</label>
+                </p>
+              </div>
+            </div>
+            <div className='fun-facts'>
+              <img src={open} className='less' alt='Expand ' onClick={() => { fun_facts(); show() }} />
+              <img src={close} className='less1' onClick={() => { hide() }} />
+              <p className='facts'></p>
+            </div>
           </div>
-          <div className='col-lg-4 wind'>
-            <img src='https://cdn-icons-png.flaticon.com/128/9829/9829463.png' />
-            <p className='windp'></p>
-          </div>
-          <div className='col-lg-4 wind'>
-            <p className='windp'>
-              <label>Min Temp:{min_temp}</label>
-              <br />
-              <label>Max Temp:{max_temp}</label>
-            </p>
-          </div>
-        </div>
-        <div className='fun-facts col-lg-6'>
-          <img src={open} className='less' alt='Expand ' onClick={() => { fun_facts(); show() }} />
-          <img src={close} className='less1' onClick={() => { hide() }} />
-          <p className='facts'></p>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
